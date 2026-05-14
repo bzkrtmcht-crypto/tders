@@ -258,7 +258,7 @@
 
     function addNewHour() {
       const weekId = '<%= week.id %>';
-      const hourNumber = <% if (hours && hours.length > 0) { %><%= hours.length + 1 %><% } else { %>1<% } %>;
+      const hourNumber = <%= hours && hours.length > 0 ? hours.length + 1 : 1 %>;
 
       const data = {
         week_id: weekId,
