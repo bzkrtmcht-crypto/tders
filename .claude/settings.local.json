@@ -4,7 +4,13 @@
       "PowerShell(node check_db.js)",
       "PowerShell(node add_week1.js)",
       "PowerShell(npm start *)",
-      "PowerShell(node init_db.js)"
+      "PowerShell(node init_db.js)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(Get-Content views/*.ejs -Raw)",
+      "Bash(Select-String \"<%=\" -Context 2)",
+      "Skill(frontend-design)"
     ]
   }
 }

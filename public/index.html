@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tango Müfredatı</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    header { background: #c41e3a; color: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; }
+    header h1 { font-size: 32px; margin-bottom: 10px; }
+    .btn { background: #c41e3a; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-right: 10px; }
+    .btn:hover { background: #a01830; }
+    .btn-success { background: #27ae60; }
+    .btn-success:hover { background: #229954; }
+    .btn-danger { background: #e74c3c; }
+    .btn-danger:hover { background: #c0392b; }
+    .weeks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .week-card { background: white; border: 2px solid #e74c3c; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .week-card h2 { color: #c41e3a; margin-bottom: 10px; font-size: 20px; }
+    .week-card p { color: #666; margin-bottom: 15px; line-height: 1.5; }
+    .card-actions { display: flex; gap: 10px; }
+    .card-actions button { flex: 1; }
+    .form-container { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: none; }
+    .form-container.show { display: block; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; }
+    .form-actions { display: flex; gap: 10px; margin-top: 15px; }
+    .form-actions button { flex: 1; padding: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💃 Tango Müfredatı 🕺</h1>
+      <p>Hafta-hafta detaylı öğretim planı</p>
+      <button class="btn btn-success" onclick="showAddForm()">+ Yeni Hafta Ekle</button>
+    </header>
+
+    <div id="addForm" class="form-container">
+      <h2>Yeni Hafta Ekle</h2>
+      <div class="form-group">
+        <label>Hafta Numarası:</label>
+        <input type="number" id="week_number" required>
+      </div>
+      <div class="form-group">
+        <label>Başlık:</label>
+        <input type="text" id="title" required>
+      </div>
+      <div class="form-group">
+        <label>Hedefler:</label>
+        <textarea id="goals" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>İçerik:</label>
+        <textarea id="content" rows="6"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Müzikler:</label>
+        <textarea id="music" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Ev Ödevi:</label>
+        <textarea id="homework" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Yaygın Hatalar:</label>
+        <textarea id="common_mistakes" rows="3"></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-success" onclick="addWeek()">Kaydet</button>
+        <button class="btn" onclick="hideAddForm()">İptal</button>
+      </div>
+    </div>
+
+    <div id="weeks" class="weeks-grid"></div>
+  </div>
+
+  <script>
+    function loadWeeks() {
+      fetch('/api/weeks')
+        .then(r => r.json())
+        .then(weeks => {
+          const html = weeks.map(w => `
+            <div class="week-card">
+              <h2>HAFTA ${w.week_number}</h2>
+              <p><strong>${w.title}</strong></p>
+              <p>${w.goals || 'Hedef belirlenmedi'}</p>
+              <div class="card-actions">
+                <button class="btn" onclick="window.location.href='/week.html?id=${w.id}'">Düzenle</button>
+                <button class="btn btn-danger" onclick="deleteWeek(${w.id})">Sil</button>
+              </div>
+            </div>
+          `).join('');
+          document.getElementById('weeks').innerHTML = html;
+        });
+    }
+
+    function showAddForm() {
+      document.getElementById('addForm').classList.add('show');
+    }
+
+    function hideAddForm() {
+      document.getElementById('addForm').classList.remove('show');
+      document.getElementById('addForm').querySelectorAll('input, textarea').forEach(el => el.value = '');
+    }
+
+    function addWeek() {
+      const data = {
+        week_number: document.getElementById('week_number').value,
+        title: document.getElementById('title').value,
+        goals: document.getElementById('goals').value,
+        content: document.getElementById('content').value,
+        music: document.getElementById('music').value,
+        homework: document.getElementById('homework').value,
+        common_mistakes: document.getElementById('common_mistakes').value
+      };
+
+      fetch('/api/weeks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+        .then(r => r.json())
+        .then(res => {
+          if (res.success) {
+            alert('Hafta eklendi!');
+            hideAddForm();
+            loadWeeks();
+          }
+        });
+    }
+
+    function deleteWeek(id) {
+      if (confirm('Sil?')) {
+        fetch(`/api/weeks/${id}`, { method: 'DELETE' })
+          .then(r => r.json())
+          .then(res => {
+            if (res.success) {
+              alert('Silindi!');
+              loadWeeks();
+            }
+          });
+      }
+    }
+
+    loadWeeks();
+  </script>
+</body>
+</html>

@@ -6,88 +6,57 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-// Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 
-// Database
 const db = new sqlite3.Database(path.join(__dirname, 'db', 'tango.db'), (err) => {
-  if (err) console.error('Database connection error:', err);
-  else console.log('Connected to SQLite database');
+  if (err) console.error('DB Error:', err);
+  else console.log('✅ Database connected');
 });
 
-// Create tables if not exists
-db.run(`
-  CREATE TABLE IF NOT EXISTS weeks (
-    id INTEGER PRIMARY KEY,
-    week_number INTEGER,
-    title TEXT,
-    goals TEXT,
-    content TEXT,
-    music TEXT,
-    homework TEXT,
-    common_mistakes TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
+// Create tables
+db.run(`CREATE TABLE IF NOT EXISTS weeks (
+  id INTEGER PRIMARY KEY,
+  week_number INTEGER,
+  title TEXT,
+  goals TEXT,
+  content TEXT,
+  music TEXT,
+  homework TEXT,
+  common_mistakes TEXT
+)`);
 
-db.run(`
-  CREATE TABLE IF NOT EXISTS hours (
-    id INTEGER PRIMARY KEY,
-    week_id INTEGER,
-    hour_number INTEGER,
-    baslik TEXT,
-    sure TEXT,
-    hedefler TEXT,
-    konu_baslikları TEXT,
-    notlar TEXT,
-    odevler TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (week_id) REFERENCES weeks(id) ON DELETE CASCADE
-  )
-`);
+db.run(`CREATE TABLE IF NOT EXISTS hours (
+  id INTEGER PRIMARY KEY,
+  week_id INTEGER,
+  hour_number INTEGER,
+  baslik TEXT,
+  sure TEXT,
+  hedefler TEXT,
+  konu_baslikları TEXT,
+  notlar TEXT
+)`);
 
-// Routes
-
-// Ana sayfa - Tüm haftaları göster
-app.get('/', (req, res) => {
+// API Routes
+app.get('/api/weeks', (req, res) => {
   db.all('SELECT * FROM weeks ORDER BY week_number', (err, rows) => {
-    if (err) return res.status(500).send('Veritabanı hatası');
-    res.render('index', { weeks: rows || [] });
+    res.json(rows || []);
   });
 });
 
-// Hafta detayı (saatleri ile beraber)
-app.get('/week/:id', (req, res) => {
+app.get('/api/weeks/:id', (req, res) => {
   const id = req.params.id;
   db.get('SELECT * FROM weeks WHERE id = ?', [id], (err, week) => {
-    if (err) {
-      console.error('Week query error:', err);
-      return res.status(500).send('Veritabanı hatası: ' + err.message);
-    }
-    if (!week) {
-      console.log('Week not found for id:', id);
-      return res.status(404).send('Hafta bulunamadı');
-    }
+    if (err || !week) return res.status(404).json({ error: 'Not found' });
 
     db.all('SELECT * FROM hours WHERE week_id = ? ORDER BY hour_number', [id], (err, hours) => {
-      if (err) {
-        console.error('Hours query error:', err);
-        return res.status(500).send('Veritabanı hatası: ' + err.message);
-      }
-      console.log('Rendering week_detail for week:', id, 'with', (hours || []).length, 'hours');
-      res.render('week_detail', { week: week, hours: hours || [] });
+      res.json({ week, hours: hours || [] });
     });
   });
 });
 
-// Yeni hafta oluştur (API)
 app.post('/api/weeks', (req, res) => {
   const { week_number, title, goals, content, music, homework, common_mistakes } = req.body;
-
   db.run(
     `INSERT INTO weeks (week_number, title, goals, content, music, homework, common_mistakes)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -99,14 +68,11 @@ app.post('/api/weeks', (req, res) => {
   );
 });
 
-// Hafta güncelle
 app.put('/api/weeks/:id', (req, res) => {
-  const id = req.params.id;
   const { week_number, title, goals, content, music, homework, common_mistakes } = req.body;
-
   db.run(
     `UPDATE weeks SET week_number=?, title=?, goals=?, content=?, music=?, homework=?, common_mistakes=? WHERE id=?`,
-    [week_number, title, goals, content, music, homework, common_mistakes, id],
+    [week_number, title, goals, content, music, homework, common_mistakes, req.params.id],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ success: true });
@@ -114,25 +80,19 @@ app.put('/api/weeks/:id', (req, res) => {
   );
 });
 
-// Hafta sil
 app.delete('/api/weeks/:id', (req, res) => {
-  const id = req.params.id;
-  db.run('DELETE FROM weeks WHERE id = ?', [id], function(err) {
+  db.run('DELETE FROM weeks WHERE id = ?', [req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ success: true });
   });
 });
 
-// HOURS (SAATLERİ) API
-
-// Yeni saat ekle
 app.post('/api/hours', (req, res) => {
-  const { week_id, hour_number, baslik, sure, hedefler, konu_baslikları, notlar, odevler } = req.body;
-
+  const { week_id, hour_number, baslik, sure, hedefler, konu_baslikları, notlar } = req.body;
   db.run(
-    `INSERT INTO hours (week_id, hour_number, baslik, sure, hedefler, konu_baslikları, notlar, odevler)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [week_id, hour_number, baslik, sure, hedefler, konu_baslikları, notlar, odevler],
+    `INSERT INTO hours (week_id, hour_number, baslik, sure, hedefler, konu_baslikları, notlar)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [week_id, hour_number, baslik, sure, hedefler, konu_baslikları, notlar],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ id: this.lastID, success: true });
@@ -140,14 +100,11 @@ app.post('/api/hours', (req, res) => {
   );
 });
 
-// Saat güncelle
 app.put('/api/hours/:id', (req, res) => {
-  const id = req.params.id;
-  const { baslik, sure, hedefler, konu_baslikları, notlar, odevler } = req.body;
-
+  const { baslik, sure, hedefler, konu_baslikları, notlar } = req.body;
   db.run(
-    `UPDATE hours SET baslik=?, sure=?, hedefler=?, konu_baslikları=?, notlar=?, odevler=? WHERE id=?`,
-    [baslik, sure, hedefler, konu_baslikları, notlar, odevler, id],
+    `UPDATE hours SET baslik=?, sure=?, hedefler=?, konu_baslikları=?, notlar=? WHERE id=?`,
+    [baslik, sure, hedefler, konu_baslikları, notlar, req.params.id],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ success: true });
@@ -155,21 +112,14 @@ app.put('/api/hours/:id', (req, res) => {
   );
 });
 
-// Saat sil
 app.delete('/api/hours/:id', (req, res) => {
-  const id = req.params.id;
-  db.run('DELETE FROM hours WHERE id = ?', [id], function(err) {
+  db.run('DELETE FROM hours WHERE id = ?', [req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ success: true });
   });
 });
 
-// Server başlat
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Tango Curriculum server çalışıyor!`);
-  console.log(`📱 Bilgisayarda aç: http://localhost:${PORT}`);
-  console.log(`📱 Telefondan aç: http://<BILGISAYAR_IP>:${PORT}`);
-  console.log(`\nBilgisayarın IP adresini aşağıda bulabilirsin:`);
-  console.log(`Terminal/PowerShell'de yazınız: ipconfig`);
-  console.log(`"IPv4 Address" satırındaki IP'yi kopyala\n`);
+  console.log(`\n✅ Tango Curriculum Server çalışıyor!`);
+  console.log(`📱 http://localhost:${PORT}\n`);
 });
