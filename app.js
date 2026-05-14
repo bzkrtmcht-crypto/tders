@@ -64,11 +64,21 @@ app.get('/', (req, res) => {
 app.get('/week/:id', (req, res) => {
   const id = req.params.id;
   db.get('SELECT * FROM weeks WHERE id = ?', [id], (err, week) => {
-    if (err) return res.status(500).send('Veritabanı hatası');
-    if (!week) return res.status(404).send('Hafta bulunamadı');
+    if (err) {
+      console.error('Week query error:', err);
+      return res.status(500).send('Veritabanı hatası: ' + err.message);
+    }
+    if (!week) {
+      console.log('Week not found for id:', id);
+      return res.status(404).send('Hafta bulunamadı');
+    }
 
     db.all('SELECT * FROM hours WHERE week_id = ? ORDER BY hour_number', [id], (err, hours) => {
-      if (err) return res.status(500).send('Veritabanı hatası');
+      if (err) {
+        console.error('Hours query error:', err);
+        return res.status(500).send('Veritabanı hatası: ' + err.message);
+      }
+      console.log('Rendering week_detail for week:', id, 'with', (hours || []).length, 'hours');
       res.render('week_detail', { week: week, hours: hours || [] });
     });
   });
