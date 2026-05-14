@@ -174,31 +174,31 @@
         <% if (hours && hours.length > 0) { %>
           <% hours.forEach(hour => { %>
             <div class="hour-card view-mode" id="hour-<%= hour.id %>">
-              <div class="hour-number"><%- hour.hour_number %></div>
-              <h3><%- hour.baslik %></h3>
+              <div class="hour-number"><%=hour.hour_number %></div>
+              <h3><%=hour.baslik %></h3>
 
               <div class="field">
                 <label>⏱️ Süre</label>
-                <div class="field-value"><%- hour.sure %></div>
-                <textarea class="field-textarea" name="sure"><%- hour.sure %></textarea>
+                <div class="field-value"><%=hour.sure %></div>
+                <textarea class="field-textarea" name="sure"><%=hour.sure %></textarea>
               </div>
 
               <div class="field">
                 <label>🎯 Hedefler</label>
-                <div class="field-value"><%- hour.hedefler %></div>
-                <textarea class="field-textarea" name="hedefler"><%- hour.hedefler %></textarea>
+                <div class="field-value"><%=hour.hedefler %></div>
+                <textarea class="field-textarea" name="hedefler"><%=hour.hedefler %></textarea>
               </div>
 
               <div class="field">
                 <label>📚 Konu Başlıkları</label>
-                <div class="field-value"><%- hour.konu_baslikları %></div>
-                <textarea class="field-textarea" name="konu_baslikları"><%- hour.konu_baslikları %></textarea>
+                <div class="field-value"><%=hour.konu_baslikları %></div>
+                <textarea class="field-textarea" name="konu_baslikları"><%=hour.konu_baslikları %></textarea>
               </div>
 
               <div class="field">
                 <label>📝 Notlar</label>
-                <div class="field-value"><%- hour.notlar %></div>
-                <textarea class="field-textarea" name="notlar"><%- hour.notlar %></textarea>
+                <div class="field-value"><%=hour.notlar %></div>
+                <textarea class="field-textarea" name="notlar"><%=hour.notlar %></textarea>
               </div>
 
               <div class="hour-actions">
