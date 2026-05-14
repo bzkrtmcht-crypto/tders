@@ -3,245 +3,512 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HAFTA <%= week.week_number %> - Detay</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>HAFTA <%= week.week_number %> - Tango Müfredatı</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    .hours-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-      gap: 20px;
-      margin: 30px 0;
-    }
-
-    .hour-box {
-      border: 2px solid #e74c3c;
-      border-radius: 8px;
-      padding: 20px;
-      background: linear-gradient(135deg, #fff9f5 0%, #ffe8dc 100%);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-    }
-
-    .hour-box:hover {
-      box-shadow: 0 8px 12px rgba(0,0,0,0.15);
-      transform: translateY(-2px);
-    }
-
-    .hour-number {
-      font-size: 24px;
-      font-weight: bold;
-      color: #e74c3c;
-      margin-bottom: 10px;
-    }
-
-    .hour-box h3 {
-      color: #c0392b;
-      margin: 10px 0;
-      font-size: 18px;
-    }
-
-    .hour-field {
-      margin: 15px 0;
-      padding: 10px;
-      background: white;
-      border-left: 4px solid #e74c3c;
-      border-radius: 4px;
-    }
-
-    .hour-field label {
-      font-weight: bold;
-      color: #2c3e50;
-      display: block;
-      margin-bottom: 5px;
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-
-    .hour-field textarea {
-      width: 100%;
-      min-height: 80px;
-      padding: 8px;
-      border: 1px solid #bdc3c7;
-      border-radius: 4px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 13px;
-    }
-
-    .hour-field p {
-      margin: 5px 0;
-      line-height: 1.6;
-      color: #555;
-      white-space: pre-wrap;
-    }
-
-    .hour-actions {
-      margin-top: 15px;
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-small {
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    .edit-mode .hour-field textarea {
-      display: block;
-    }
-
-    .edit-mode .hour-field p {
-      display: none;
-    }
-
-    .view-mode .hour-field textarea {
-      display: none;
-    }
-
-    .view-mode .hour-field p {
-      display: block;
-    }
-
-    .week-header {
-      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-      color: white;
-      padding: 30px;
-      border-radius: 8px;
-      margin-bottom: 30px;
-    }
-
-    .week-header h1 {
+    * {
       margin: 0;
-      font-size: 28px;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .week-header .subtitle {
-      margin-top: 10px;
-      font-size: 16px;
-      opacity: 0.9;
+    :root {
+      --primary: #c41e3a;
+      --primary-dark: #8b1528;
+      --accent: #f39c12;
+      --accent-light: #f5a623;
+      --cream: #faf8f3;
+      --text-dark: #1a1a1a;
+      --text-light: #666;
+      --border: #e8e8e8;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
     }
 
-    .back-link {
-      color: white;
-      text-decoration: none;
-      font-size: 14px;
-      margin-top: 15px;
-      display: inline-block;
-    }
-
-    .back-link:hover {
-      text-decoration: underline;
+    body {
+      font-family: 'Lora', serif;
+      background: linear-gradient(135deg, #faf8f3 0%, #f5f0e8 100%);
+      color: var(--text-dark);
+      min-height: 100vh;
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
     }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 60px 40px;
+      border-radius: 12px;
+      margin-bottom: 60px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    .page-header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .back-button {
+      display: inline-block;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 20px;
+      transition: color 0.3s;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+    }
+
+    .back-button:hover {
+      color: white;
+    }
+
+    .week-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .week-title {
+      font-size: 24px;
+      font-weight: 400;
+      opacity: 0.95;
+      margin-bottom: 20px;
+    }
+
+    .week-goals {
+      font-size: 14px;
+      opacity: 0.9;
+      line-height: 1.6;
+      max-width: 600px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Info Banner */
+    .lesson-info {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid var(--accent);
+    }
+
+    .lesson-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: var(--text-dark);
+    }
+
+    .lesson-info p {
+      font-size: 14px;
+      color: var(--text-light);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+    }
+
+    /* Time Slots Grid */
+    .time-slots {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .time-slot {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--border);
+    }
+
+    .time-slot:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+
+    .time-slot.edit-mode {
+      box-shadow: 0 0 0 2px var(--primary);
+    }
+
+    /* Time Slot Header */
+    .slot-header {
+      background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(243, 156, 18, 0.05) 100%);
+      padding: 24px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .slot-number {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .slot-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    /* Slot Content */
+    .slot-content {
+      padding: 24px;
+    }
+
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    .field-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .field-label {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .field-value {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-dark);
+      white-space: pre-wrap;
+    }
+
+    .field-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      color: var(--text-dark);
+      resize: vertical;
+      transition: border-color 0.3s;
+    }
+
+    .field-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
+    }
+
+    /* View/Edit Mode */
+    .view-mode .field-value {
+      display: block;
+    }
+
+    .view-mode .field-textarea {
+      display: none;
+    }
+
+    .edit-mode .field-value {
+      display: none;
+    }
+
+    .edit-mode .field-textarea {
+      display: block;
+    }
+
+    /* Slot Actions */
+    .slot-actions {
+      padding: 20px 24px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-edit {
+      background: var(--primary);
+      color: white;
+      flex: 1;
+    }
+
+    .btn-edit:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-save {
+      background: var(--accent);
+      color: white;
+      flex: 1;
+    }
+
+    .btn-save:hover {
+      background: var(--accent-light);
+    }
+
+    .btn-cancel {
+      background: var(--border);
+      color: var(--text-dark);
+      flex: 1;
+    }
+
+    .btn-cancel:hover {
+      background: #d8d8d8;
+    }
+
+    .btn.hidden {
+      display: none;
+    }
+
+    /* Empty State */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 40px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state p {
+      font-size: 16px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-add {
+      background: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-add:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px 15px;
+      }
+
+      .page-header {
+        padding: 40px 25px;
+        margin-bottom: 40px;
+      }
+
+      .week-number {
+        font-size: 36px;
+      }
+
+      .week-title {
+        font-size: 20px;
+      }
+
+      .time-slots {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .slot-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    /* Animations */
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .page-header {
+      animation: slideUp 0.6s ease-out;
+    }
+
+    .time-slot {
+      animation: slideUp 0.6s ease-out;
+    }
+
+    .time-slot:nth-child(1) { animation-delay: 0.1s; }
+    .time-slot:nth-child(2) { animation-delay: 0.15s; }
+    .time-slot:nth-child(3) { animation-delay: 0.2s; }
+    .time-slot:nth-child(4) { animation-delay: 0.25s; }
+    .time-slot:nth-child(5) { animation-delay: 0.3s; }
+    .time-slot:nth-child(6) { animation-delay: 0.35s; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="week-header">
-      <a href="/" class="back-link">← ANA SAYFA</a>
-      <h1>HAFTA <%= week.week_number %></h1>
-      <p class="subtitle"><%= week.title %></p>
-      <div style="margin-top: 20px;">
-        <strong>Hedef:</strong> <%= week.goals %>
+    <!-- Header -->
+    <div class="page-header">
+      <div class="page-header-content">
+        <a href="/" class="back-button">← Ana Sayfa</a>
+        <h1 class="week-number">HAFTA <%= week.week_number %></h1>
+        <p class="week-title"><%= week.title %></p>
+        <p class="week-goals"><strong>Hedef:</strong> <%= week.goals %></p>
       </div>
     </div>
 
-    <div style="margin-bottom: 20px; padding: 15px; background: #ecf0f1; border-radius: 4px;">
-      <h3 style="margin-top: 0;">60 Dakika = 6 x 10 Dakika Bölümü</h3>
-      <p>Aşağıdaki kutucuklarda her 10 dakikalık dersin detayları var. Düzenlemek için "Düzenle" butonuna tıkla, kaydettikten sonra "Görüntüle"ye tıkla.</p>
+    <!-- Lesson Info -->
+    <div class="lesson-info">
+      <h3>⏰ 60 Dakikalık Ders Planı</h3>
+      <p>6 bölüm × 10 dakika. Her bölümün detaylarını görmek için "Düzenle"ye tıklayın.</p>
     </div>
 
-    <div class="hours-grid">
+    <!-- Time Slots -->
+    <div class="time-slots">
       <% if (hours && hours.length > 0) { %>
-        <% hours.forEach(hour => { %>
-          <div class="hour-box view-mode" id="hour-<%= hour.id %>">
-            <div class="hour-number">⏰ SAAT <%= hour.hour_number %}</div>
-
-            <h3><%= hour.baslik %></h3>
-
-            <div class="hour-field">
-              <label>⏱️ SURE</label>
-              <textarea name="sure" class="edit-textarea"><%= hour.sure %></textarea>
-              <p><strong><%= hour.sure %></strong></p>
+        <% hours.forEach((hour, index) => { %>
+          <div class="time-slot view-mode" id="slot-<%= hour.id %>">
+            <div class="slot-header">
+              <div class="slot-number"><%= hour.hour_number %></div>
+              <h2 class="slot-title"><%= hour.baslik %></h2>
             </div>
 
-            <div class="hour-field">
-              <label>🎯 HEDEFLER</label>
-              <textarea name="hedefler" class="edit-textarea"><%= hour.hedefler %></textarea>
-              <p><%= hour.hedefler %></p>
+            <div class="slot-content">
+              <div class="field-group">
+                <label class="field-label">⏱️ Süre</label>
+                <div class="field-value"><%= hour.sure %></div>
+                <textarea class="field-textarea" name="sure"><%= hour.sure %></textarea>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">🎯 Hedefler</label>
+                <div class="field-value"><%= hour.hedefler %></div>
+                <textarea class="field-textarea" name="hedefler"><%= hour.hedefler %></textarea>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">📚 Konu Başlıkları</label>
+                <div class="field-value"><%= hour.konu_baslikları %></div>
+                <textarea class="field-textarea" name="konu_baslikları"><%= hour.konu_baslikları %></textarea>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">📝 Notlar & Uyarılar</label>
+                <div class="field-value"><%= hour.notlar %></div>
+                <textarea class="field-textarea" name="notlar"><%= hour.notlar %></textarea>
+              </div>
             </div>
 
-            <div class="hour-field">
-              <label>📚 KONU BAŞLIKLARI</label>
-              <textarea name="konu_baslikları" class="edit-textarea"><%= hour.konu_baslikları %></textarea>
-              <p><%= hour.konu_baslikları %></p>
-            </div>
-
-            <div class="hour-field">
-              <label>📝 NOTLAR & UYARILAR</label>
-              <textarea name="notlar" class="edit-textarea"><%= hour.notlar %></textarea>
-              <p><%= hour.notlar %></p>
-            </div>
-
-            <div class="hour-actions">
-              <button class="btn btn-primary btn-small" onclick="editHour(<%= hour.id %>)">✏️ Düzenle</button>
-              <button class="btn btn-success btn-small" onclick="saveHour(<%= hour.id %>, this)" style="display:none;">✔️ Kaydet</button>
-              <button class="btn btn-secondary btn-small" onclick="cancelEdit(<%= hour.id %>)" style="display:none;">✕ İptal</button>
+            <div class="slot-actions">
+              <button class="btn btn-edit" onclick="enterEditMode(<%= hour.id %>)">✏️ Düzenle</button>
+              <button class="btn btn-save hidden" onclick="saveSlot(<%= hour.id %>)">✔️ Kaydet</button>
+              <button class="btn btn-cancel hidden" onclick="cancelEdit(<%= hour.id %>)">✕ İptal</button>
             </div>
           </div>
         <% }); %>
       <% } else { %>
-        <div style="grid-column: 1/-1; padding: 20px; text-align: center; background: #ecf0f1; border-radius: 8px;">
-          <p>Bu hafta için henüz saat eklenmedi.</p>
-          <button class="btn btn-primary" onclick="addNewHour()">+ Yeni Saat Ekle</button>
+        <div class="empty-state">
+          <div class="empty-state-icon">📭</div>
+          <p>Bu hafta için henüz zaman bölümü eklenmedi.</p>
+          <button class="btn-add" onclick="addNewSlot()">+ Yeni Bölüm Ekle</button>
         </div>
       <% } %>
     </div>
   </div>
 
   <script>
-    function editHour(hourId) {
-      const box = document.getElementById(`hour-${hourId}`);
-      box.classList.remove('view-mode');
-      box.classList.add('edit-mode');
+    function enterEditMode(slotId) {
+      const slot = document.getElementById(`slot-${slotId}`);
+      slot.classList.remove('view-mode');
+      slot.classList.add('edit-mode');
 
-      // Edit butonlarını gizle, Kaydet ve İptal butonlarını göster
-      const buttons = box.querySelectorAll('button');
-      buttons[0].style.display = 'none';   // Düzenle
-      buttons[1].style.display = 'inline'; // Kaydet
-      buttons[2].style.display = 'inline'; // İptal
+      const buttons = slot.querySelectorAll('.btn');
+      buttons[0].classList.add('hidden');      // Edit
+      buttons[1].classList.remove('hidden');   // Save
+      buttons[2].classList.remove('hidden');   // Cancel
     }
 
-    function cancelEdit(hourId) {
-      const box = document.getElementById(`hour-${hourId}`);
-      box.classList.remove('edit-mode');
-      box.classList.add('view-mode');
-
-      // Butonları eski haline dön
-      const buttons = box.querySelectorAll('button');
-      buttons[0].style.display = 'inline';
-      buttons[1].style.display = 'none';
-      buttons[2].style.display = 'none';
-
-      // Değişiklikleri geri al
+    function cancelEdit(slotId) {
       location.reload();
     }
 
-    function saveHour(hourId, button) {
-      const box = document.getElementById(`hour-${hourId}`);
-      const textareas = box.querySelectorAll('textarea');
+    function saveSlot(slotId) {
+      const slot = document.getElementById(`slot-${slotId}`);
+      const textareas = slot.querySelectorAll('textarea');
 
       const data = {
-        baslik: box.querySelector('h3').textContent,
+        baslik: slot.querySelector('.slot-title').textContent,
         sure: textareas[0].value,
         hedefler: textareas[1].value,
         konu_baslikları: textareas[2].value,
         notlar: textareas[3].value
       };
 
-      fetch(`/api/hours/${hourId}`, {
+      fetch(`/api/hours/${slotId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -249,21 +516,21 @@
         .then(res => res.json())
         .then(result => {
           if (result.success) {
-            alert('Saat başarıyla güncellendi!');
+            alert('Bölüm başarıyla kaydedildi! ✓');
             location.reload();
           }
         })
         .catch(err => alert('Hata: ' + err));
     }
 
-    function addNewHour() {
+    function addNewSlot() {
       const weekId = '<%= week.id %>';
-      const hourNumber = <%= hours && hours.length > 0 ? hours.length + 1 : 1 %>;
+      const slotNumber = <%= hours && hours.length > 0 ? hours.length + 1 : 1 %>;
 
       const data = {
         week_id: weekId,
-        hour_number: hourNumber,
-        baslik: `Saat ${hourNumber}`,
+        hour_number: slotNumber,
+        baslik: `Bölüm ${slotNumber}`,
         sure: '10 dakika',
         hedefler: 'Hedefleri yazınız',
         konu_baslikları: 'Konuları yazınız',
@@ -278,7 +545,7 @@
         .then(res => res.json())
         .then(result => {
           if (result.success) {
-            alert('Yeni saat eklendi!');
+            alert('Yeni bölüm eklendi!');
             location.reload();
           }
         })
