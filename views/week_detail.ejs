@@ -3,285 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HAFTA <%= week.week_number %> - Detay</title>
+  <title>Hafta Detayı</title>
   <link rel="stylesheet" href="/css/style.css">
-  <style>
-    .hours-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 20px;
-      margin: 30px 0;
-    }
-
-    .hour-card {
-      background: white;
-      border: 2px solid #e74c3c;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-    }
-
-    .hour-card:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transform: translateY(-2px);
-    }
-
-    .hour-card.edit-mode {
-      background: #fff9f5;
-      border-color: #c41e3a;
-    }
-
-    .hour-number {
-      display: inline-block;
-      background: #e74c3c;
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      text-align: center;
-      line-height: 40px;
-      font-weight: bold;
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .hour-card h3 {
-      color: #c41e3a;
-      margin: 10px 0 15px 0;
-      font-size: 18px;
-    }
-
-    .field {
-      margin-bottom: 15px;
-    }
-
-    .field label {
-      display: block;
-      font-weight: bold;
-      color: #333;
-      font-size: 13px;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-    }
-
-    .field-value {
-      padding: 8px;
-      background: #f9f9f9;
-      border-left: 3px solid #e74c3c;
-      border-radius: 4px;
-      font-size: 14px;
-      line-height: 1.5;
-      color: #555;
-      white-space: pre-wrap;
-    }
-
-    .field-textarea {
-      width: 100%;
-      min-height: 70px;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-family: inherit;
-      font-size: 14px;
-      resize: vertical;
-      display: none;
-    }
-
-    .hour-card.edit-mode .field-value {
-      display: none;
-    }
-
-    .hour-card.edit-mode .field-textarea {
-      display: block;
-    }
-
-    .hour-actions {
-      margin-top: 15px;
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn-small {
-      flex: 1;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: bold;
-      transition: all 0.3s;
-    }
-
-    .btn-edit {
-      background: #e74c3c;
-      color: white;
-    }
-
-    .btn-edit:hover {
-      background: #c41e3a;
-    }
-
-    .btn-save {
-      background: #27ae60;
-      color: white;
-      display: none;
-    }
-
-    .btn-save:hover {
-      background: #229954;
-    }
-
-    .btn-cancel {
-      background: #95a5a6;
-      color: white;
-      display: none;
-    }
-
-    .btn-cancel:hover {
-      background: #7f8c8d;
-    }
-
-    .hour-card.edit-mode .btn-edit {
-      display: none;
-    }
-
-    .hour-card.edit-mode .btn-save,
-    .hour-card.edit-mode .btn-cancel {
-      display: block;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>HAFTA <%= week.week_number %>: <%= week.title %></h1>
+      <h1>HAFTA <%= week.week_number %></h1>
       <a href="/" class="back-link">← Geri Dön</a>
     </header>
 
     <section class="edit-form-container">
-      <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-        <h3 style="margin-top: 0; color: #333;">📌 Hedef</h3>
-        <p style="margin: 0; color: #666;"><%= week.goals %></p>
-      </div>
+      <h2><%= week.title %></h2>
+      <p><strong>Hedef:</strong> <%= week.goals %></p>
 
-      <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 30px;">
-        <h3 style="margin-top: 0; color: #333;">⏰ 60 Dakika = 6 × 10 Dakika</h3>
-        <p style="margin: 0; color: #666;">Aşağıdaki kutucuklarda her 10 dakikalık bölümün detayları var. Düzenlemek için "Düzenle" butonuna tıklayın.</p>
-      </div>
+      <div style="margin-top: 30px;">
+        <h3>Zaman Bölümleri</h3>
 
-      <div class="hours-container">
         <% if (hours && hours.length > 0) { %>
-          <% hours.forEach(hour => { %>
-            <div class="hour-card view-mode" id="hour-<%= hour.id %>">
-              <div class="hour-number"><%=hour.hour_number %></div>
-              <h3><%=hour.baslik %></h3>
+          <% hours.forEach(function(hour) { %>
+            <div style="background: white; border: 2px solid #e74c3c; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+              <h4 style="color: #e74c3c; margin-bottom: 10px;">Bölüm <%= hour.hour_number %>: <%= hour.baslik %></h4>
 
-              <div class="field">
-                <label>⏱️ Süre</label>
-                <div class="field-value"><%=hour.sure %></div>
-                <textarea class="field-textarea" name="sure"><%=hour.sure %></textarea>
+              <div style="margin: 10px 0;">
+                <strong>Süre:</strong> <%= hour.sure %>
               </div>
 
-              <div class="field">
-                <label>🎯 Hedefler</label>
-                <div class="field-value"><%=hour.hedefler %></div>
-                <textarea class="field-textarea" name="hedefler"><%=hour.hedefler %></textarea>
+              <div style="margin: 10px 0;">
+                <strong>Hedefler:</strong> <%= hour.hedefler %>
               </div>
 
-              <div class="field">
-                <label>📚 Konu Başlıkları</label>
-                <div class="field-value"><%=hour.konu_baslikları %></div>
-                <textarea class="field-textarea" name="konu_baslikları"><%=hour.konu_baslikları %></textarea>
+              <div style="margin: 10px 0;">
+                <strong>Konular:</strong> <%= hour.konu_baslikları %>
               </div>
 
-              <div class="field">
-                <label>📝 Notlar</label>
-                <div class="field-value"><%=hour.notlar %></div>
-                <textarea class="field-textarea" name="notlar"><%=hour.notlar %></textarea>
+              <div style="margin: 10px 0;">
+                <strong>Notlar:</strong> <%= hour.notlar %>
               </div>
 
-              <div class="hour-actions">
-                <button class="btn-small btn-edit" onclick="editHour(<%= hour.id %>)">✏️ Düzenle</button>
-                <button class="btn-small btn-save" onclick="saveHour(<%= hour.id %>)">✔️ Kaydet</button>
-                <button class="btn-small btn-cancel" onclick="cancelEdit(<%= hour.id %>)">✕ İptal</button>
-              </div>
+              <button onclick="editHour(<%= hour.id %>)" style="background: #e74c3c; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                Düzenle
+              </button>
             </div>
           <% }); %>
         <% } else { %>
-          <div style="grid-column: 1/-1; padding: 30px; text-align: center; background: white; border-radius: 8px;">
-            <p style="color: #999; margin-bottom: 15px;">Bu hafta için henüz saat eklenmedi.</p>
-            <button class="btn btn-primary" onclick="addNewHour()">+ Yeni Saat Ekle</button>
-          </div>
+          <p>Bu hafta için bölüm eklenmedi.</p>
         <% } %>
       </div>
     </section>
   </div>
 
   <script>
-    function editHour(hourId) {
-      document.getElementById('hour-' + hourId).classList.add('edit-mode');
-      document.getElementById('hour-' + hourId).classList.remove('view-mode');
-    }
-
-    function cancelEdit(hourId) {
-      location.reload();
-    }
-
-    function saveHour(hourId) {
-      const card = document.getElementById('hour-' + hourId);
-      const textareas = card.querySelectorAll('textarea');
-
-      const data = {
-        baslik: card.querySelector('h3').textContent,
-        sure: textareas[0].value,
-        hedefler: textareas[1].value,
-        konu_baslikları: textareas[2].value,
-        notlar: textareas[3].value
-      };
-
-      fetch('/api/hours/' + hourId, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-        .then(res => res.json())
-        .then(result => {
-          if (result.success) {
-            alert('Saat başarıyla kaydedildi!');
-            location.reload();
-          }
-        })
-        .catch(err => alert('Hata: ' + err));
-    }
-
-    function addNewHour() {
-      const weekId = '<%= week.id %>';
-      const hourNumber = <%= hours && hours.length > 0 ? hours.length + 1 : 1 %>;
-
-      const data = {
-        week_id: weekId,
-        hour_number: hourNumber,
-        baslik: 'Saat ' + hourNumber,
-        sure: '10 dakika',
-        hedefler: 'Hedefleri yazınız',
-        konu_baslikları: 'Konuları yazınız',
-        notlar: 'Notları yazınız'
-      };
-
-      fetch('/api/hours', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-        .then(res => res.json())
-        .then(result => {
-          if (result.success) {
-            alert('Yeni saat eklendi!');
-            location.reload();
-          }
-        })
-        .catch(err => alert('Hata: ' + err));
+    function editHour(id) {
+      alert('Bölüm düzenleme: ' + id);
     }
   </script>
 </body>
