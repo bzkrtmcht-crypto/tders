@@ -26,7 +26,10 @@ db.run(`
     week_number INTEGER,
     title TEXT,
     goals TEXT,
+    content TEXT,
     music TEXT,
+    homework TEXT,
+    common_mistakes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `);
