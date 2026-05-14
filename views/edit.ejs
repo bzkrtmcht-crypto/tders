@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HAFTA <%= week.week_number %> - Düzenle</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>HAFTA <%= week.week_number %>: <%= week.title %></h1>
+      <a href="/" class="back-link">← Geri Dön</a>
+    </header>
+
+    <section class="edit-form-container">
+      <form id="editForm" onsubmit="handleUpdateWeek(event)">
+
+        <div class="form-group">
+          <label>Hafta Numarası:</label>
+          <input type="number" name="week_number" value="<%= week.week_number %>" required>
+        </div>
+
+        <div class="form-group">
+          <label>Başlık:</label>
+          <input type="text" name="title" value="<%= week.title %>" required>
+        </div>
+
+        <div class="form-group">
+          <label>📌 Hedefler:</label>
+          <textarea name="goals" rows="4" required><%= week.goals %></textarea>
+          <small>Virgülle ayrılmış şekilde yaz (örn: Hedef 1, Hedef 2, Hedef 3)</small>
+        </div>
+
+        <div class="form-group">
+          <label>📚 İçerik:</label>
+          <textarea name="content" rows="10" required><%= week.content %></textarea>
+          <small>Dersin tüm detaylarını yazabilirsin</small>
+        </div>
+
+        <div class="form-group">
+          <label>⏱️ Zaman Dağılımı:</label>
+          <p class="info-text">Ders 60 dakika total - zaman dağılımını içerikte belirt</p>
+        </div>
+
+        <div class="form-group">
+          <label>🎵 Müzikler:</label>
+          <textarea name="music" rows="4" required><%= week.music %></textarea>
+          <small>Önerilen müzikleri virgülle ayır</small>
+        </div>
+
+        <div class="form-group">
+          <label>💪 Ev Ödevi:</label>
+          <textarea name="homework" rows="4" required><%= week.homework %></textarea>
+          <small>Öğrencilerin evde yapması gereken görevler</small>
+        </div>
+
+        <div class="form-group">
+          <label>⚠️ Yaygın Hatalar:</label>
+          <textarea name="common_mistakes" rows="4" required><%= week.common_mistakes %></textarea>
+          <small>Dikkat edilmesi gereken hatalar</small>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success btn-lg">Değişiklikleri Kaydet</button>
+          <a href="/" class="btn btn-secondary btn-lg">İptal Et</a>
+        </div>
+      </form>
+    </section>
+
+    <!-- Hafta Özeti -->
+    <section class="week-summary">
+      <h2>Hafta Özeti</h2>
+      <div class="summary-card">
+        <h3>HAFTA <%= week.week_number %>: <%= week.title %></h3>
+
+        <div class="summary-section">
+          <h4>📌 Hedefler</h4>
+          <p><%= week.goals %></p>
+        </div>
+
+        <div class="summary-section">
+          <h4>📚 İçerik Özeti</h4>
+          <p><%= week.content.substring(0, 300) %>...</p>
+        </div>
+
+        <div class="summary-section">
+          <h4>🎵 Müzikler</h4>
+          <p><%= week.music %></p>
+        </div>
+
+        <div class="summary-section">
+          <h4>💪 Ev Ödevi</h4>
+          <p><%= week.homework %></p>
+        </div>
+
+        <div class="summary-section">
+          <h4>⚠️ Yaygın Hatalar</h4>
+          <p><%= week.common_mistakes %></p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function handleUpdateWeek(event) {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData);
+
+      fetch(`/api/weeks/<%= week.id %>`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(result => {
+          if (result.success) {
+            alert('Hafta başarıyla güncellendi!');
+            window.location.href = '/';
+          }
+        })
+        .catch(err => alert('Hata: ' + err));
+    }
+  </script>
+</body>
+</html>

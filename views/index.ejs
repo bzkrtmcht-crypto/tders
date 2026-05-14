@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tango Müfredatı</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💃 Tango Müfredatı 🕺</h1>
+      <p class="subtitle">Hafta-hafta detaylı öğretim planı</p>
+    </header>
+
+    <section class="admin-panel">
+      <button class="btn btn-primary" onclick="showAddForm()">+ Yeni Hafta Ekle</button>
+    </section>
+
+    <!-- Yeni Hafta Formu -->
+    <div id="addFormContainer" class="form-container hidden">
+      <form id="addForm" onsubmit="handleAddWeek(event)">
+        <h2>Yeni Hafta Ekle</h2>
+
+        <div class="form-group">
+          <label>Hafta Numarası:</label>
+          <input type="number" name="week_number" required>
+        </div>
+
+        <div class="form-group">
+          <label>Başlık:</label>
+          <input type="text" name="title" required>
+        </div>
+
+        <div class="form-group">
+          <label>Hedefler:</label>
+          <textarea name="goals" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>İçerik:</label>
+          <textarea name="content" rows="6"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Müzikler:</label>
+          <textarea name="music" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Ev Ödevi:</label>
+          <textarea name="homework" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Yaygın Hatalar:</label>
+          <textarea name="common_mistakes" rows="3"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">Kaydet</button>
+          <button type="button" class="btn btn-cancel" onclick="hideAddForm()">İptal</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Haftalar Listesi -->
+    <section class="weeks-grid">
+      <% if (weeks && weeks.length > 0) { %>
+        <% weeks.forEach(week => { %>
+          <div class="week-card">
+            <div class="week-header">
+              <h2>HAFTA <%= week.week_number %></h2>
+              <span class="week-title"><%= week.title %></span>
+            </div>
+
+            <div class="week-content">
+              <div class="content-section">
+                <h3>📌 Hedefler:</h3>
+                <p><%= week.goals %></p>
+              </div>
+
+              <div class="content-section">
+                <h3>📊 Yapı:</h3>
+                <p>6 x 10 dakika (60 dakikalık ders)</p>
+              </div>
+
+              <div class="content-section">
+                <h3>🎵 Önerilen Müzikler:</h3>
+                <p><%= week.music ? (typeof week.music === 'string' ? week.music : JSON.stringify(week.music).substring(0, 200)) : 'Tanımlanmadı' %></p>
+              </div>
+            </div>
+
+            <div class="week-actions">
+              <a href="/week/<%= week.id %>" class="btn btn-info">Düzenle</a>
+              <button class="btn btn-danger" onclick="deleteWeek(<%= week.id %>)">Sil</button>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="empty-state">
+          <p>Henüz hafta eklenmedi. "Yeni Hafta Ekle" butonuna tıkla.</p>
+        </div>
+      <% } %>
+    </section>
+  </div>
+
+  <script>
+    function showAddForm() {
+      document.getElementById('addFormContainer').classList.remove('hidden');
+      window.scrollTo(0, document.getElementById('addFormContainer').offsetTop);
+    }
+
+    function hideAddForm() {
+      document.getElementById('addFormContainer').classList.add('hidden');
+      document.getElementById('addForm').reset();
+    }
+
+    function handleAddWeek(event) {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData);
+
+      fetch('/api/weeks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(result => {
+          if (result.success) {
+            alert('Hafta başarıyla eklendi!');
+            location.reload();
+          }
+        })
+        .catch(err => alert('Hata: ' + err));
+    }
+
+    function deleteWeek(id) {
+      if (confirm('Bu haftayı silmek istediğine emin misin?')) {
+        fetch(`/api/weeks/${id}`, { method: 'DELETE' })
+          .then(res => res.json())
+          .then(result => {
+            if (result.success) {
+              alert('Hafta silindi!');
+              location.reload();
+            }
+          })
+          .catch(err => alert('Hata: ' + err));
+      }
+    }
+  </script>
+</body>
+</html>
