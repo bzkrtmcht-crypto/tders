@@ -87,7 +87,7 @@
 
               <div class="content-section">
                 <h3>🎵 Önerilen Müzikler:</h3>
-                <p><%= week.music ? (typeof week.music === 'string' ? week.music : JSON.stringify(week.music).substring(0, 200)) : 'Tanımlanmadı' %></p>
+                <p><%= week.music || 'Tanımlanmadı' %></p>
               </div>
             </div>
 
