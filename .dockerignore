@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.DS_Store
+add_week1.js
+check_db.js
+migrate_data.js
+init_db.js

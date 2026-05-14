@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Tango Curriculum Uygulaması
+  tango-app:
+    build: .
+    container_name: tango-curriculum
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./db:/app/db
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+  # Coolify (Deployment Platform)
+  coolify:
+    image: coollabsio/coolify:latest
+    container_name: coolify
+    ports:
+      - "3001:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - coolify-db:/data/coolify/database
+      - coolify-ssh:/data/coolify/.ssh
+    environment:
+      - COOLIFY_PRIVATE_IP=localhost
+      - COOLIFY_SECRET_KEY=${COOLIFY_SECRET_KEY:-your-secret-key-change-this}
+    restart: unless-stopped
+
+volumes:
+  coolify-db:
+  coolify-ssh:
